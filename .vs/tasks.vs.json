@@ -1,0 +1,55 @@
+{
+  "version": "0.2.1",
+  "tasks": [
+    {
+      "taskLabel": "task-appsettings",
+      "appliesTo": "appsettings.json",
+      "type": "launch"
+    },
+    {
+      "taskLabel": "task-WarehouseApp",
+      "appliesTo": "/",
+      "type": "launch"
+    },
+    {
+      "taskLabel": "task-WarehouseApp",
+      "appliesTo": "/",
+      "type": "launch"
+    },
+    {
+      "taskLabel": "task-WarehouseApp",
+      "appliesTo": "/",
+      "type": "launch"
+    },
+    {
+      "taskLabel": "task-WarehouseApp",
+      "appliesTo": "/",
+      "type": "launch"
+    },
+    {
+      "taskLabel": "task-WarehouseApp",
+      "appliesTo": "/",
+      "type": "launch"
+    },
+    {
+      "taskLabel": "task-WarehouseApp",
+      "appliesTo": "/",
+      "type": "launch"
+    },
+    {
+      "taskLabel": "task-launchSettings",
+      "appliesTo": "Properties/launchSettings.json",
+      "type": "launch"
+    },
+    {
+      "taskLabel": "task-WarehouseApp",
+      "appliesTo": "/",
+      "type": "launch"
+    },
+    {
+      "taskLabel": "task-WarehouseApp",
+      "appliesTo": "/",
+      "type": "launch"
+    }
+  ]
+}

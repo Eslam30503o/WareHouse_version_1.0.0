@@ -1,0 +1,120 @@
+html {
+    font-size: 14px;
+}
+
+/* “Ì«œ… ÕÃ„ «·Œÿ ⁄·Ï «·√ÃÂ“… «·ﬂ»Ì—… */
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+/* “Ì«œ… ÕÃ„ «·Œÿ ⁄·Ï «·‘«‘«  «·ﬂ»Ì—… */
+@media (min-width: 1024px) {
+    html {
+        font-size: 18px;
+    }
+}
+
+/*  √ÀÌ— «·√“—«— ⁄‰œ «· ›«⁄· */
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    outline: none; /* ≈“«·… «·Œÿ «·„ÕÌÿ »‘ﬂ· œ«∆„ */
+    background-color: #0056b3; /*  €ÌÌ— ·Ê‰ «·Œ·›Ì… */
+    border-color: #0056b3; /*  €ÌÌ— ·Ê‰ «·Õœ */
+}
+
+/*  Õ”Ì‰  ›«⁄· «·√“—«— */
+.btn:hover {
+    background-color: #0069d9;
+    border-color: #0062cc;
+    transform: translateY(-2px);
+}
+
+.btn:active {
+    background-color: #0056b3;
+    border-color: #004085;
+    transform: translateY(2px);
+}
+
+/*  Õ”Ì‰ ÕﬁÊ· «·≈œŒ«· ⁄‰œ «· ›«⁄· */
+.form-control:focus {
+    border-color: #258cfb;
+    box-shadow: 0 0 0 0.2rem rgba(37, 140, 251, 0.25);
+}
+
+/* ≈÷«›…  √ÀÌ—«  ⁄‰œ «· ›«⁄· „⁄ Õﬁ· «·»ÕÀ √Ê «·Õﬁ· «·‰’Ì */
+.form-control::placeholder {
+    color: #6c757d;
+}
+
+
+/*  Õ”Ì‰ «· »«⁄œ »Ì‰ «·⁄‰«’— */
+body {
+    margin-bottom: 60px;
+    background-color: #f8f9fa; /*  €ÌÌ— «·Œ·›Ì… */
+}
+
+.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+    color: #6c757d;
+    text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+    text-align: start;
+    color: #495057;
+}
+
+/*  Õ”Ì‰ «·‘ﬂ· «·⁄«„ ··‰„Ê–Ã */
+.form-group {
+    margin-bottom: 15px;
+    padding: 10px;
+}
+
+/*  Õ”Ì‰  ‰”Ìﬁ «·ÕﬁÊ· «·„‰»Àﬁ… (floating labels) */
+.form-floating .form-control {
+    background-color: #fff;
+    border-radius: 0.375rem;
+    padding: 1rem 0.75rem;
+    border: 1px solid #ced4da;
+}
+
+.form-floating > label {
+    color: #495057;
+    padding: 0.5rem 0.75rem;
+}
+
+/*  ›«⁄· „⁄ «·ÕﬁÊ· √À‰«¡ «·ﬂ «»… */
+.form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
+}
+
+/*  Õ”Ì‰ «·‰’Ê’ ›Ì ’›Õ… «·‹ Create */
+h2 {
+    text-align: center;
+    color: #007bff;
+    font-size: 1.5rem;
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+
+@media (max-width: 768px) {
+    html {
+        font-size: 12px; /* Œ›÷ ÕÃ„ «·Œÿ ⁄·Ï «·‘«‘«  «·’€Ì—… */
+    }
+
+    .form-group {
+        margin-bottom: 10px;
+    }
+
+    .btn {
+        padding: 8px 15px;
+        font-size: 14px;
+    }
+
+    h2 {
+        font-size: 1.2rem;
+    }
+}

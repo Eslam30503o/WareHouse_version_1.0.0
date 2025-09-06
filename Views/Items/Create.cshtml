@@ -1,0 +1,298 @@
+@model WarehouseApp.Models.Item
+@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization
+
+@inject IViewLocalizer Localizer
+
+@{
+    ViewData["Title"] = Localizer["Add New Item"];
+}
+
+@section Styles {
+    <link href="~/css/create.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <style>
+        body {
+            direction: @Localizer["Direction"];
+            text-align: @Localizer["TextAlign"];
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-control {
+            border-radius: 0.25rem;
+        }
+        .btn-cancel {
+            margin-left: 1rem;
+        }
+        .alert {
+            margin-bottom: 1.5rem;
+        }
+        .loading-overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            text-align: center;
+            padding-top: 20%;
+            z-index: 1000;
+        }
+        .tooltip-inner {
+            background-color: #343a40;
+            color: white;
+        }
+        /* Light Mode */
+        body.light-mode {
+            background-color: #ffffff;
+            color: #000000;
+        }
+        /* Dark Mode */
+        body.dark-mode {
+            background-color: #222222;
+            color: #ffffff;
+        }
+        body.dark-mode .form-control {
+            background-color: #333333;
+            color: #ffffff;
+            border-color: #555555;
+        }
+        body.dark-mode .alert {
+            background-color: #444444;
+            color: #ffffff;
+        }
+        body.dark-mode .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        body.dark-mode .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+        .theme-toggle, .language-toggle {
+            margin-left: 1rem;
+        }
+    </style>
+}
+
+<div class="d-flex justify-content-end mb-3">
+    <select id="languageToggle" class="form-select w-auto language-toggle">
+        <option value="ar" selected="@(CultureInfo.CurrentCulture.Name == "ar")">«·⁄—»Ì…</option>
+        <option value="en" selected="@(CultureInfo.CurrentCulture.Name == "en")">English</option>
+    </select>
+    <button id="themeToggle" class="btn btn-outline-secondary theme-toggle">
+        <i class="bi bi-moon-fill"></i> <span>@Localizer["Toggle Theme"]</span>
+    </button>
+</div>
+
+<h2>@ViewData["Title"]</h2>
+
+@if (ViewData["Message"] != null)
+{
+<div class="alert alert-info" role="alert">
+    @ViewData["Message"]
+</div>
+}
+
+<div class="position-relative">
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">@Localizer["Loading"]</span>
+        </div>
+    </div>
+
+    <form asp-action="Create" method="post" id="createItemForm">
+        @Html.AntiForgeryToken()
+
+        <div class="form-group">
+            <label asp-for="Name" class="form-label">@Localizer["Item Name"]</label>
+            <input asp-for="Name" class="form-control" placeholder="@Localizer["Enter item name"]" aria-describedby="nameHelp" required data-bs-toggle="tooltip" title="@Localizer["Enter a descriptive item name"]" />
+            <small id="nameHelp" class="form-text text-muted">@Localizer["Example: Product A"]</small>
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Code" class="form-label">@Localizer["Item Code"]</label>
+            <input asp-for="Code" class="form-control" placeholder="@Localizer["Enter item code"]" aria-describedby="codeHelp" required data-bs-toggle="tooltip" title="@Localizer["Code must be unique"]" id="itemCode" />
+            <small id="codeHelp" class="form-text text-muted">@Localizer["Example: PRD-001"]</small>
+            <span id="codeValidationMessage" class="text-danger"></span>
+            <span asp-validation-for="Code" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Quantity" class="form-label">@Localizer["Quantity"]</label>
+            <input asp-for="Quantity" type="number" class="form-control" placeholder="@Localizer["Enter quantity"]" min="0" aria-describedby="quantityHelp" required data-bs-toggle="tooltip" title="@Localizer["Current stock quantity"]" />
+            <small id="quantityHelp" class="form-text text-muted">@Localizer["Current stock quantity"]</small>
+            <span asp-validation-for="Quantity" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="MinQuantity" class="form-label">@Localizer["Min Quantity"]</label>
+            <input asp-for="MinQuantity" type="number" class="form-control" placeholder="@Localizer["Enter min quantity"]" min="0" aria-describedby="minQuantityHelp" required data-bs-toggle="tooltip" title="@Localizer["Minimum quantity before restocking"]" />
+            <small id="minQuantityHelp" class="form-text text-muted">@Localizer["Minimum quantity for restocking"]</small>
+            <span asp-validation-for="MinQuantity" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Supplier" class="form-label">@Localizer["Supplier"]</label>
+            <select asp-for="Supplier" class="form-control" aria-describedby="supplierHelp" required data-bs-toggle="tooltip" title="@Localizer["Select supplier"]">
+                <option value="">@Localizer["Select supplier"]</option>
+                @foreach (var supplier in ViewData["Suppliers"] as List<string> ?? new List<string>())
+                {
+                <option value="@supplier">@supplier</option>
+                }
+            </select>
+            <small id="supplierHelp" class="form-text text-muted">@Localizer["Choose supplier name"]</small>
+            <span asp-validation-for="Supplier" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="LastUpdate" class="form-label">@Localizer["Last Update"]</label>
+            <input asp-for="LastUpdate" type="date" class="form-control" value="@DateTime.Today.ToString("yyyy-MM-dd")" aria-describedby="lastUpdateHelp" required data-bs-toggle="tooltip" title="@Localizer["Last update date"]" />
+            <small id="lastUpdateHelp" class="form-text text-muted">@Localizer["Default is today"]</small>
+            <span asp-validation-for="LastUpdate" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> @Localizer["Save"]</button>
+            <a asp-action="Index" class="btn btn-secondary btn-cancel"><i class="bi bi-x-circle"></i> @Localizer["Cancel"]</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/additional-methods.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Initialize tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+                new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+
+            // Theme toggle
+            const themeToggle = $("#themeToggle");
+            const body = $("body");
+            const currentTheme = localStorage.getItem("theme") || "light-mode";
+            body.addClass(currentTheme);
+            themeToggle.find("span").text(currentTheme === "dark-mode" ? "@Localizer["Light Mode"]" : "@Localizer["Dark Mode"]");
+            themeToggle.find("i").removeClass().addClass(currentTheme === "dark-mode" ? "bi bi-sun-fill" : "bi bi-moon-fill");
+
+            themeToggle.on("click", function () {
+                if (body.hasClass("light-mode")) {
+                    body.removeClass("light-mode").addClass("dark-mode");
+                    themeToggle.find("span").text("@Localizer["Light Mode"]");
+                    themeToggle.find("i").removeClass("bi-moon-fill").addClass("bi-sun-fill");
+                    localStorage.setItem("theme", "dark-mode");
+                } else {
+                    body.removeClass("dark-mode").addClass("light-mode");
+                    themeToggle.find("span").text("@Localizer["Dark Mode"]");
+                    themeToggle.find("i").removeClass("bi-sun-fill").addClass("bi-moon-fill");
+                    localStorage.setItem("theme", "light-mode");
+                }
+            });
+
+            // Language toggle
+            $("#languageToggle").on("change", function () {
+                const selectedLanguage = $(this).val();
+                $.ajax({
+                    url: "@Url.Action("SetLanguage", "Home")",
+                    type: "POST",
+                    data: { culture: selectedLanguage },
+                    success: function () {
+                        location.reload();
+                    }
+                });
+            });
+
+            // Form validation
+            $("#createItemForm").validate({
+                rules: {
+                    Name: {
+                        required: true,
+                        maxlength: 100
+                    },
+                    Code: {
+                        required: true,
+                        maxlength: 50,
+                        remote: {
+                            url: "@Url.Action("CheckCode", "Items")",
+                            type: "GET",
+                            data: function () {
+                                return { code: $("#itemCode").val() };
+                            }
+                        }
+                    },
+                    Quantity: {
+                        required: true,
+                        number: true,
+                        min: 0
+                    },
+                    MinQuantity: {
+                        required: true,
+                        number: true,
+                        min: 0
+                    },
+                    Supplier: {
+                        required: true
+                    },
+                    LastUpdate: {
+                        required: true,
+                        date: true
+                    }
+                },
+                messages: {
+                    Name: {
+                        required: "@Localizer["Please enter item name"]",
+                        maxlength: "@Localizer["Item name cannot exceed 100 characters"]"
+                    },
+                    Code: {
+                        required: "@Localizer["Please enter item code"]",
+                        maxlength: "@Localizer["Item code cannot exceed 50 characters"]",
+                        remote: "@Localizer["This code is already used"]"
+                    },
+                    Quantity: {
+                        required: "@Localizer["Please enter quantity"]",
+                        number: "@Localizer["Please enter a valid number"]",
+                        min: "@Localizer["Quantity cannot be negative"]"
+                    },
+                    MinQuantity: {
+                        required: "@Localizer["Please enter minimum quantity"]",
+                        number: "@Localizer["Please enter a valid number"]",
+                        min: "@Localizer["Min quantity cannot be negative"]"
+                    },
+                    Supplier: {
+                        required: "@Localizer["Please select supplier"]"
+                    },
+                    LastUpdate: {
+                        required: "@Localizer["Please enter last update date"]",
+                        date: "@Localizer["Please enter a valid date"]"
+                    }
+                },
+                errorElement: "span",
+                errorClass: "text-danger",
+                highlight: function (element) {
+                    $(element).addClass("is-invalid");
+                },
+                unhighlight: function (element) {
+                    $(element).removeClass("is-invalid");
+                },
+                submitHandler: function (form) {
+                    $("#loadingOverlay").show();
+                    form.submit();
+                }
+            });
+
+            // Show/hide loading overlay
+            $("#createItemForm").on("submit", function () {
+                $("#loadingOverlay").show();
+            });
+        });
+    </script>
+}

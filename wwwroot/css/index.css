@@ -1,0 +1,29 @@
+/* index.css */
+body {
+	background-color: #e9ecef;
+}
+
+h2 {
+	color: #495057;
+	text-align: left;
+	padding: 20px 0;
+}
+
+.table {
+	width: 100%;
+	margin-top: 20px;
+}
+
+	.table th, .table td {
+		padding: 12px;
+		text-align: center;
+	}
+
+.btn-success {
+	background-color: #007bff;
+	border-color: #007bff;
+}
+
+	.btn-success:hover {
+		background-color: #0056b3;
+	}
